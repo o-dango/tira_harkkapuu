@@ -1,15 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-struct tree {
-
-    int node;
-    int status;
-    struct tree *pLeft;
-    struct tree *pRight;
-
-}; typedef struct tree *pTree;
+#include <math.h>
+#include "bintree.h"
+#include "misc.h"
 
 
 void rotate_left(pTree *pNode, int *status) {
@@ -114,13 +108,15 @@ void rotate_right(pTree *pNode, int *status) {
 }
 
 
-void addNode(pTree *pNode, int number, int *stable) {
+int addNode(pTree *pNode, int number, int *stable) {
+
+    int temp = 0;
 
     if(!(*pNode)) {
 
         *stable = 1;
         if(!(*pNode = (pTree)malloc(sizeof(pTree)))) {
-            perror("malloc");
+            perror("Muistinvaraus epäonnistui!");
             exit(1);
         }
 
@@ -131,7 +127,7 @@ void addNode(pTree *pNode, int number, int *stable) {
 
     else if(number < (*pNode)->node) {
 
-        addNode(&(*pNode)->pLeft, number, stable);
+        temp = addNode(&(*pNode)->pLeft, number, stable);
 
         if(*stable) {
 
@@ -158,7 +154,7 @@ void addNode(pTree *pNode, int number, int *stable) {
 
     else if(number > (*pNode)->node) {
 
-        addNode(&(*pNode)->pRight, number, stable);
+        temp = addNode(&(*pNode)->pRight, number, stable);
 
         if(*stable) {
 
@@ -186,9 +182,12 @@ void addNode(pTree *pNode, int number, int *stable) {
     else {
 
         *stable = 0;
-        printf("Luku %d on jo puussa\n", number);
+        //printf("Luku %d on jo puussa\n", number);
+        temp = 1;
 
     }
+
+    return temp;
 
 }
 
@@ -225,22 +224,86 @@ void printTree(pTree pNode, int i) {
 }
 
 
-void getLevel(pTree pNode, int current, int value) {
+void getLevels(pTree pNode, int current, int layer) {
 
-    if(!pNode) return;
+    int h = getHeight(pNode, current), i;
+    int help = (int)pow(2.0, (double)(h-layer)) - 1;
 
-    else if(pNode->node == value) {
+    if(pNode && (!(pNode->pLeft) || !(pNode->pRight))) {
 
-        printf("Luku %d on tasolla %d\n", pNode->node, current);
+        for(i = 0; help > i; i++) {
+
+            printf("\t:D");
+
+        }
+
+    }
+
+    if(pNode && current == layer) {
+
+        for(i = 0; help > i; i++) {
+
+            printf("%d\t", help);
+
+        }
+
+        printf("%d[%d]\t\t", pNode->node, pNode->status);
+
+        for(i = 0; help > i; i++) {
+
+            printf("\t");
+
+        }
 
     }
 
-    else {
+    else if(!pNode && current == layer) {
 
-        getLevel(pNode->pRight, current+1, value);
-        getLevel(pNode->pLeft, current+1, value);
+        for(i = 0; help > i; i++) {
+
+            printf("\t");
+
+        }
+
+        printf("%s\t\t", "NULL");
+
+        for(i = 0; help > i; i++) {
+
+            printf("\t");
+
+        }
 
     }
+
+
+    else if(pNode && current < layer) {
+
+        getLevels(pNode->pLeft, current+1, layer);
+        //printf("\t%d %d\t", layer, h);
+        getLevels(pNode->pRight, current+1, layer);
+
+    }
+
+
+}
+
+
+int getHeight(pTree pNode, int current) {
+
+    int h = 0;
+    int temp;
+
+    if(pNode) {
+
+        h = current;
+        temp = getHeight(pNode->pLeft, current+1);
+        h = (h >= temp) ? h : temp;
+        temp = getHeight(pNode->pRight, current+1);
+        h = (h >= temp) ? h : temp;
+
+    }
+
+    return h;
 
 }
 
@@ -261,13 +324,13 @@ int searchKey(pTree pNode, int key) {
 
 	else if(pNode->node > key) {
 
-		searchKey(pNode->pLeft, key);
+		return searchKey(pNode->pLeft, key);
 
 	}
 
 	else {
 
-		searchKey(pNode->pRight, key);
+		return searchKey(pNode->pRight, key);
 
 	}
 

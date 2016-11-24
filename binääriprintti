@@ -1,0 +1,36 @@
+void getLevels(pTree pNode, int current, int layer) {
+
+    int h = getHeight(pNode, current), i, help;
+
+    if(pNode && current == layer) {
+
+        help = (int)pow(2.0, (double)(h-layer)) - 1;
+        //printf("Luku %d on tasolla %d\n", pNode->node, current);
+        //printf("\t");
+
+        for(i = 0; help > i; i++) {
+
+            printf("\t");
+
+        }
+
+        printf("%d\t\t", pNode->node);
+
+        for(i = 0; help > i; i++) {
+
+            printf("\t");
+
+        }
+
+    }
+
+    else if(pNode && current < layer) {
+
+        getLevels(pNode->pLeft, current+1, layer);
+        //printf("\t%d %d\t", layer, h);
+        getLevels(pNode->pRight, current+1, layer);
+
+    }
+
+
+}
