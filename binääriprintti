@@ -1,20 +1,17 @@
-void getLevels(pTree pNode, int current, int layer) {
+void printLayer(pTree pNode, int current, int layer, int h) {
 
-    int h = getHeight(pNode, current), i, help;
+    int i;
+    int help = (int)pow(2.0, (double)(h-layer)) - 1;
 
     if(pNode && current == layer) {
 
-        help = (int)pow(2.0, (double)(h-layer)) - 1;
-        //printf("Luku %d on tasolla %d\n", pNode->node, current);
-        //printf("\t");
-
         for(i = 0; help > i; i++) {
 
             printf("\t");
 
         }
 
-        printf("%d\t\t", pNode->node);
+        printf("%d[%d]\t\t", pNode->node, pNode->status);
 
         for(i = 0; help > i; i++) {
 
@@ -23,14 +20,81 @@ void getLevels(pTree pNode, int current, int layer) {
         }
 
     }
+
+    else if(!pNode && current == layer) {
+
+        for(i = 0; help > i; i++) {
+
+            printf("\t");
+
+        }
+
+        printf("%s\t\t", "NULL");
+
+        for(i = 0; help > i; i++) {
+
+            printf("\t");
+
+        }
+
+    }
+
 
     else if(pNode && current < layer) {
 
-        getLevels(pNode->pLeft, current+1, layer);
+        printLayer(pNode->pLeft, current+1, layer, h);
         //printf("\t%d %d\t", layer, h);
-        getLevels(pNode->pRight, current+1, layer);
+        printLayer(pNode->pRight, current+1, layer, h);
 
     }
 
+    else if(!pNode && current < layer) {
+
+        printf("\t\t\t\t");
+
+    }
+
+}
+
+
+void printLines(int help, int height, int i) {
+
+	for(int j = 0; (help-1)/2 > j; j++) {
+
+		printf("\t");
+
+	}
+
+	if(i < height) {
+
+		for(int k = 0; k < pow(2,i); k++) {
+
+			printf("  %lc", 0x250F);
+
+			for(int l = 0; l <= 4*help+1; l++) {
+
+				printf("%lc", 0x2501);
+
+			}
+
+			printf("%lc", 0x253B);
+
+			for(int l = 0; l <= 4*help+1; l++) {
+
+				printf("%lc", 0x2501);
+
+			}
+
+			printf("%lc  ", 0x2513);
+
+			for(int j = 0; help >= j; j++) {
+
+				printf("\t");
+
+			}
+
+		}
+
+	}
 
 }
