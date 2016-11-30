@@ -20,7 +20,7 @@ void generateNumbers(char *filename) {
 
 	int minLimit, maxLimit, numCount, i, number;
 	char tempMin[CHAR_MAX], tempMax[CHAR_MAX], tempCount[CHAR_MAX];
-	FILE *pFile;
+	FILE* pFile;
 
 	while(1) {
 
@@ -79,13 +79,22 @@ void generateNumbers(char *filename) {
 
 void createTree(pTree *pStart, int stable) {									/*Aliohjelma tiedoston lukuun*/
 
-	FILE* file;																	/*Määrittelyjä*/
+	FILE* pFile;																	/*Määrittelyjä*/
 	char buffer[CHAR_MAX];
 	char name[CHAR_MAX];
 	int j = 0;
 	int number, selection;
 
 	selection = fileMenu();
+
+	if((pFile = fopen("binääripuu.txt", "w")) == NULL) {
+
+		perror("Tiedoston tyhjennys epäonnistui\n");
+		exit(1);
+
+	}
+
+	fclose(pFile);
 
 	printf("Anna tiedoston nimi: ");
 	fgets(name, sizeof(name), stdin);
@@ -99,7 +108,7 @@ void createTree(pTree *pStart, int stable) {									/*Aliohjelma tiedoston luku
 	}
 
 	printf("Avataan tiedosto: %s\n", name);
-	if ((file = fopen(name,"r")) == NULL) {										/*Avatataan tiedosto lukutilaan*/
+	if ((pFile = fopen(name,"r")) == NULL) {										/*Avatataan tiedosto lukutilaan*/
 
 		perror("Tiedoston avaaminen epäonnistui");								/*Jos tiedoston avaaminen epäonnistuu*/
 		exit(1);
@@ -107,7 +116,7 @@ void createTree(pTree *pStart, int stable) {									/*Aliohjelma tiedoston luku
 	}
 
 	printf("\n");
-	while(fgets(buffer,(sizeof(buffer)), file) != NULL) {						/*Käydään tiedosto läpi rivi kerrallaan ja luetaan tiedot talteen*/
+	while(fgets(buffer,(sizeof(buffer)), pFile) != NULL) {						/*Käydään tiedosto läpi rivi kerrallaan ja luetaan tiedot talteen*/
 
 		j = j + 1;
 
@@ -129,12 +138,12 @@ void createTree(pTree *pStart, int stable) {									/*Aliohjelma tiedoston luku
 	if (j == 0) {																/*Jos tiedosto oli tyhjä*/
 
 		printf("Tiedosto on tyhjä!\n");
-		fclose(file);
+		fclose(pFile);
 		exit(1);
 
 	}
 
-	fclose(file);																/*Suljetaan tiedosto*/
+	fclose(pFile);																/*Suljetaan tiedosto*/
 
 }
 

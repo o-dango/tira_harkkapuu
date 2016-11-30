@@ -62,11 +62,11 @@ int fileMenu(void) {
 }
 
 
-void printLines(int help, int height, int i) {
+void printLines(int help, int height, int i, FILE *pFile) {
 
 	for(int j = 0; (help-1)/2 > j; j++) {
 
-		printf("\t");
+		fprintf(pFile, "\t");
 
 	}
 
@@ -74,27 +74,27 @@ void printLines(int help, int height, int i) {
 
 		for(int k = 0; k < pow(2,i); k++) {
 
-			printf("  %lc", 0x250F);
+			fprintf(pFile, "  %lc", 0x250F);
 
 			for(int l = 0; l <= 4*help+1; l++) {
 
-				printf("%lc", 0x2501);
+				fprintf(pFile, "%lc", 0x2501);
 
 			}
 
-			printf("%lc", 0x253B);
+			fprintf(pFile, "%lc", 0x253B);
 
 			for(int l = 0; l <= 4*help+1; l++) {
 
-				printf("%lc", 0x2501);
+				fprintf(pFile, "%lc", 0x2501);
 
 			}
 
-			printf("%lc  ", 0x2513);
+			fprintf(pFile, "%lc  ", 0x2513);
 
 			for(int j = 0; help >= j; j++) {
 
-				printf("\t");
+				fprintf(pFile, "\t");
 
 			}
 
@@ -105,7 +105,7 @@ void printLines(int help, int height, int i) {
 }
 
 
-void printLayer(pTree pNode, int current, int layer, int h) {
+void printLayer(pTree pNode, int current, int layer, int h, FILE *pFile) {
 
     int i;
     int help = (int)pow(2.0, (double)(h-layer)) - 1;
@@ -114,15 +114,15 @@ void printLayer(pTree pNode, int current, int layer, int h) {
 
         for(i = 0; help > i; i++) {
 
-            printf("\t");
+            fprintf(pFile, "\t");
 
         }
 
-        printf("%d[%d]\t\t", pNode->node, pNode->status);
+        fprintf(pFile, "%d[%d]\t\t", pNode->node, pNode->status);
 
         for(i = 0; help > i; i++) {
 
-            printf("\t");
+            fprintf(pFile, "\t");
 
         }
 
@@ -132,15 +132,15 @@ void printLayer(pTree pNode, int current, int layer, int h) {
 
         for(i = 0; help > i; i++) {
 
-            printf("\t");
+            fprintf(pFile, "\t");
 
         }
 
-        printf("%s\t\t", "NULL");
+        fprintf(pFile, "%s\t\t", "NULL");
 
         for(i = 0; help > i; i++) {
 
-            printf("\t");
+            fprintf(pFile, "\t");
 
         }
 
@@ -149,15 +149,15 @@ void printLayer(pTree pNode, int current, int layer, int h) {
 
     else if(pNode && current < layer) {
 
-        printLayer(pNode->pLeft, current+1, layer, h);
+        printLayer(pNode->pLeft, current+1, layer, h, pFile);
         //printf("\t%d %d\t", layer, h);
-        printLayer(pNode->pRight, current+1, layer, h);
+        printLayer(pNode->pRight, current+1, layer, h, pFile);
 
     }
 
     else if(!pNode && current < layer) {
 
-        printf("\t\t\t\t");
+        fprintf(pFile, "\t\t\t\t");
 
     }
 
@@ -167,18 +167,30 @@ void printLayer(pTree pNode, int current, int layer, int h) {
 void printTree(pTree pStart) {
 
 	setlocale(LC_ALL, "");
+	FILE* pFile;
+
+	if((pFile = fopen("binääripuu.txt", "a")) == NULL) {
+
+		perror("Tiedoston avaus epäonnistui\n");
+		exit(1);
+
+	}
+
 	int height = getHeight(pStart, 0), help;
 
 	for(int i = 0; i <= height; i++) {
 
 		help = (int)pow(2.0, (double)(height-i)) - 1;
 
-		printLayer(pStart, 0, i, height);
-		printf("\n");
-		printLines(help, height, i);
-		printf("\n\n");
+		printLayer(pStart, 0, i, height, pFile);
+		fprintf(pFile, "\n");
+		printLines(help, height, i, pFile);
+		fprintf(pFile, "\n\n");
 
 	}
+
+	fprintf(pFile, "\n\n\n");
+	fclose(pFile);
 
 }
 
