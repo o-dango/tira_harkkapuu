@@ -11,12 +11,19 @@
 void rotate_left(pTree *pNode, int *status) {
 
     pTree child, grandchild;
-
     child = (*pNode)->pLeft;
+    FILE* pFile;
+
+    if((pFile = fopen("binääripuu.txt", "a")) == NULL) {
+
+        perror("Tiedoston avaus epäonnistui\n");
+        exit(1);
+
+    }
 
     if(child->status == 1) {  //LL-kierto
 
-        printf("Tehdään LL-kierto\n\n\n");
+        fprintf(pFile, "Tehdään LL-kierto\n\n\n");
         (*pNode)->pLeft = child->pRight;
         child->pRight = *pNode;
         (*pNode)->status = 0;
@@ -26,7 +33,7 @@ void rotate_left(pTree *pNode, int *status) {
 
     else { //LR-kierto
 
-        printf("Tehdään LR-kierto\n\n\n");
+        fprintf(pFile, "Tehdään LR-kierto\n\n\n");
         grandchild = child->pRight;
         child->pRight = grandchild->pLeft;
         grandchild->pLeft = child;
@@ -55,6 +62,7 @@ void rotate_left(pTree *pNode, int *status) {
 
     (*pNode)->status = 0;
     *status = 0;
+    fclose(pFile);
 
 }
 
@@ -62,12 +70,19 @@ void rotate_left(pTree *pNode, int *status) {
 void rotate_right(pTree *pNode, int *status) {
 
     pTree child, grandchild;
-
     child = (*pNode)->pRight;
+    FILE* pFile;
+
+    if((pFile = fopen("binääripuu.txt", "a")) == NULL) {
+
+        perror("Tiedoston avaus epäonnistui\n");
+        exit(1);
+
+    }
 
     if(child->status == -1) {  //RR-kierto
 
-        printf("Tehdään RR-kierto\n\n\n");
+        fprintf(pFile, "Tehdään RR-kierto\n\n\n");
         (*pNode)->pRight = child->pLeft;
         child->pLeft = *pNode;
         (*pNode)->status = 0;
@@ -77,7 +92,7 @@ void rotate_right(pTree *pNode, int *status) {
 
     else { //RL-kierto
 
-        printf("Tehdään RL-kierto\n\n\n");
+        fprintf(pFile, "Tehdään RL-kierto\n\n\n");
         grandchild = child->pLeft;
         child->pLeft = grandchild->pRight;
         grandchild->pRight = child;
@@ -106,6 +121,7 @@ void rotate_right(pTree *pNode, int *status) {
 
     (*pNode)->status = 0;
     *status = 0;
+    fclose(pFile);
 
 }
 

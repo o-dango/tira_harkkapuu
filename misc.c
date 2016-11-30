@@ -204,15 +204,26 @@ int checkValue(char buffer) {
 void callTree(pTree *pStart, int number, int *stable) {
 
 	int height;
+	FILE* pFile;
+
+	if((pFile = fopen("binääripuu.txt", "a")) == NULL) {
+
+		perror("Tiedoston avaus epäonnistui\n");
+		exit(1);
+
+	}
+
+	fprintf(pFile, "Lisätään luku: %d\n", number);
+	height = getHeight(*pStart, 0);
+	fprintf(pFile, "Puun syvyys: %d\n", height);
 
 	if(addNode(pStart, number, stable) == 0) {
 
-		height = getHeight(*pStart, 0);
-		printf("Puun syvyys: %d\n", height);
 		printTree(*pStart);
-		printf("\n\n\n");
 
 	}
+
+	fclose(pFile);
 
 }
 
