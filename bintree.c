@@ -4,6 +4,8 @@
 #include <math.h>
 #include "bintree.h"
 #include "misc.h"
+#include <wchar.h>
+#include <locale.h>
 
 
 void rotate_left(pTree *pNode, int *status) {
@@ -123,6 +125,7 @@ int addNode(pTree *pNode, int number, int *stable) {
         (*pNode)->pLeft = (*pNode)->pRight = NULL;
         (*pNode)->status = 0;
         (*pNode)->node = number;
+
     }
 
     else if(number < (*pNode)->node) {
@@ -201,89 +204,6 @@ void emptyTree(pTree pNode) {
         free(pNode);
 
     }
-
-}
-
-
-void printTree(pTree pNode, int i) {
-
-    i++;
-
-    if(pNode) {
-
-        printTree(pNode->pRight, i);
-        for(int j = 1; j < i; j++) {
-            printf("\t");
-        }
-
-        printf("%d(%d)\n", pNode->node, pNode->status);
-        printTree(pNode->pLeft, i);
-
-    }
-
-}
-
-
-void getLevels(pTree pNode, int current, int layer) {
-
-    int h = getHeight(pNode, current), i;
-    int help = (int)pow(2.0, (double)(h-layer)) - 1;
-
-    if(pNode && (!(pNode->pLeft) || !(pNode->pRight))) {
-
-        for(i = 0; help > i; i++) {
-
-            printf("\t:D");
-
-        }
-
-    }
-
-    if(pNode && current == layer) {
-
-        for(i = 0; help > i; i++) {
-
-            printf("%d\t", help);
-
-        }
-
-        printf("%d[%d]\t\t", pNode->node, pNode->status);
-
-        for(i = 0; help > i; i++) {
-
-            printf("\t");
-
-        }
-
-    }
-
-    else if(!pNode && current == layer) {
-
-        for(i = 0; help > i; i++) {
-
-            printf("\t");
-
-        }
-
-        printf("%s\t\t", "NULL");
-
-        for(i = 0; help > i; i++) {
-
-            printf("\t");
-
-        }
-
-    }
-
-
-    else if(pNode && current < layer) {
-
-        getLevels(pNode->pLeft, current+1, layer);
-        //printf("\t%d %d\t", layer, h);
-        getLevels(pNode->pRight, current+1, layer);
-
-    }
-
 
 }
 

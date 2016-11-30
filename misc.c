@@ -1,3 +1,4 @@
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
@@ -5,18 +6,100 @@
 #include <time.h>
 #include <ctype.h>
 #include "bintree.h"
+#include "print.h"
+#include <locale.h>
+#include <math.h>
 
 int checkValue(char);
-void callTree(pTree *, int, int *);
 
-void createTree(pTree *pStart, int stable) {												/*Aliohjelma tiedoston lukuun*/
+
+void callTree(pTree*, int, int *);
+
+
+void generateNumbers(char *filename) {
+
+	int minLimit, maxLimit, numCount, i, number;
+	char tempMin[CHAR_MAX], tempMax[CHAR_MAX], tempCount[CHAR_MAX];
+	FILE *pFile;
+
+	while(1) {
+
+		printf("Anna alaraja: ");
+		fgets(tempMin, sizeof(tempMin), stdin);
+		printf("Anna yläraja: ");
+		fgets(tempMax, sizeof(tempMax), stdin);
+		printf("Anna lukujen lukumäärä: ");
+		fgets(tempCount, sizeof(tempCount), stdin);
+
+		if(checkValue(*tempMin) == 1 && checkValue(*tempMax) == 1 && checkValue(*tempCount) == 1) {
+
+			minLimit = atoi(tempMin);
+			maxLimit = atoi(tempMax);
+			numCount = atoi(tempCount);
+			break;
+
+		}
+
+		else {
+
+			printf("Virheellinen syöte :C\n");
+
+		}
+
+	}
+
+
+
+	printf("Kirjoitetaan tiedostoon: %s\n", filename);
+	if ((pFile = fopen(filename, "w")) != NULL) {
+
+		for (i = 0; i < numCount; i++) {
+
+			number = minLimit + rand() % (maxLimit-minLimit);
+			fprintf(pFile,"%d\n", number);
+			printf("%d ", number);
+
+		}
+
+	}
+
+	else {
+
+		perror("File writing failed.\n");
+		exit(1);
+
+	}
+
+	fclose(pFile);
+	printf("\n");
+
+
+}
+
+
+void createTree(pTree *pStart, int stable) {									/*Aliohjelma tiedoston lukuun*/
 
 	FILE* file;																	/*Määrittelyjä*/
 	char buffer[CHAR_MAX];
+	char name[CHAR_MAX];
 	int j = 0;
-	int number;
+	int number, selection;
 
-	if ((file = fopen("numbers.txt","r")) == NULL) {							/*Avatataan tiedosto lukutilaan*/
+	selection = fileMenu();
+
+	printf("Anna tiedoston nimi: ");
+	fgets(name, sizeof(name), stdin);
+	name[strlen(name) - 1] = '\0';
+
+	if(selection == 2) {
+
+		printf("Luodaan tiedosto: %s\n", name);
+		generateNumbers(name);
+
+	}
+
+	printf("Avataan tiedosto: %s\n", name);
+	if ((file = fopen(name,"r")) == NULL) {										/*Avatataan tiedosto lukutilaan*/
 
 		perror("Tiedoston avaaminen epäonnistui");								/*Jos tiedoston avaaminen epäonnistuu*/
 		exit(1);
@@ -28,7 +111,7 @@ void createTree(pTree *pStart, int stable) {												/*Aliohjelma tiedoston l
 
 		j = j + 1;
 
-		if ((checkValue(*buffer)) == 0) {
+		if ((checkValue(*buffer)) == 1) {
 
 			number = atoi(buffer);
 			callTree(pStart, number, &stable);
@@ -55,6 +138,7 @@ void createTree(pTree *pStart, int stable) {												/*Aliohjelma tiedoston l
 
 }
 
+
 int checkValue(char buffer) {
 
 	int check1, check2;
@@ -65,19 +149,19 @@ int checkValue(char buffer) {
 
 	if(check1 != 0 && check2 != 0) {											/*jos merkki on kirjain*/
 
-		check3 = 1;
+		check3 = 0;
 
 	}
 
 	else if (check1 == 0 && check2 != 0) {									    /*jos merkki on numero*/
 
-		check3 = 0;
+		check3 = 1;
 
 	}
 
 	else if(buffer == '\0') {
 
-		check3 = 1;
+		check3 = 0;
 
 	}
 
@@ -87,15 +171,15 @@ int checkValue(char buffer) {
 
 	}
 
-    if (check3 == 0) {                                                  	    /*palauttaa nollan jos numero*/
+    if (check3 == 1) {                                                  	    /*palauttaa nollan jos numero*/
 
-       return 0;
+       return 1;
 
     }
 
-    else if(check3 == 1) {                                                 		/*palauttaa ykkösen jos kirjaimia*/
+    else if(check3 == 0) {                                                 		/*palauttaa ykkösen jos kirjaimia*/
 
-        return 1;
+        return 0;
 
     }
 
@@ -107,6 +191,7 @@ int checkValue(char buffer) {
 
 }
 
+
 void callTree(pTree *pStart, int number, int *stable) {
 
 	int height;
@@ -115,19 +200,14 @@ void callTree(pTree *pStart, int number, int *stable) {
 
 		height = getHeight(*pStart, 0);
 		printf("Puun syvyys: %d\n", height);
-
-		printf("______________________________\n");
-
-		for(int i = 0; i <= height; i++) {
-
-			getLevels(*pStart, 0, i);
-			printf("\n\n\n");
-
-		}
-
-		//printTree(*pStart, 0);
+		printTree(*pStart);
 		printf("\n\n\n");
 
 	}
 
 }
+
+
+/*short a = 0x2501;
+wchar_t t = a;
+printf("\nmerkki: %lc\n", t);*/
