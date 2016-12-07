@@ -10,35 +10,61 @@ int main(void) {
 
 	pTree pStart = NULL;
 	char temp[CHAR_MAX];
-	int selection = 1, key, stable = 0; /*stable = tree balance indicator*/
+	int selection = 1, key, stable = 0; /*stable = tasapainoilmaisin*/
 
 	do {
-		selection = mainMenu();
+		selection = mainMenu();													/*tulostetaan valikko*/
 
 		switch (selection) {
+
 			case 0:                     										/*Tyhjennys*/
 			case 4:
 				if (pStart != NULL) {
 					emptyTree(pStart);
 					pStart = NULL;
+
 				}
+
+				printf("\nMuisti vapautettu!\n");
+				printf("＼\\ ٩( ᐛ )و /／\n");
+
 				break;
 
 			case 1:                     										/*Luvun lisäys*/
-
 				createTree(&pStart, &stable);
 				break;
 
 			case 2:                     										/*Tulostus*/
 				if (pStart == NULL) {
+
 					printf("Puu on tyhjä!\n");
 					break;
+
 				}
-				printTree(pStart);
-				printf("\n");
-				break;
+
+				else if(getHeight(pStart, 0) > 4) {
+
+					printf("Puu ei mahdu terminaaliin :(\n");
+					break;
+
+				}
+
+				else {
+
+					printTreeTerminal(pStart);
+					printf("\n");
+					break;
+
+				}
 
 			case 3:																/*Etsintä*/
+				if(pStart == NULL) {
+
+					printf("Puu on tyhjä!\n");
+					break;
+
+				}
+
 				printf("Anna etsittävä luku: ");
 				fgets(temp, sizeof(temp), stdin);
 
@@ -47,7 +73,7 @@ int main(void) {
 					key = searchKey(pStart, atoi(temp));
 
 					if (key == 0) {
-						printf("Lukua %d ei löytynyt puusta.\n", key);
+						printf("Lukua %d ei löytynyt puusta.\n", atoi(temp));
 
 					} else {
 						printf("%d löytyi binääripuusta.\n", key);
@@ -65,14 +91,12 @@ int main(void) {
 				printf("\n");
 				break;
 
-			default:
-				printf("Virheellinen valinta.\n");
+			default:															/*virheellinen syöte*/
+				printf("\nVirheellinen valinta.\n");
 				break;
 		}
-	} while (selection != 0);
 
-	printf("\nMuisti vapautettu!\n");
-	printf("＼\\ ٩( ᐛ )و /／\n");
+	} while (selection != 0);
 
 	return 0;
 

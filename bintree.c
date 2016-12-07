@@ -14,7 +14,7 @@ void rotate_left(pTree *pNode, int *status) {
     child = (*pNode)->pLeft;
     FILE* pFile;
 
-    if((pFile = fopen("binääripuu.txt", "a")) == NULL) {
+    if((pFile = fopen("binääripuu.txt", "a")) == NULL) {                        /*avataan tiedosto kirjoittamista varten*/
 
         perror("Tiedoston avaus epäonnistui\n");
         exit(1);
@@ -73,7 +73,7 @@ void rotate_right(pTree *pNode, int *status) {
     child = (*pNode)->pRight;
     FILE* pFile;
 
-    if((pFile = fopen("binääripuu.txt", "a")) == NULL) {
+    if((pFile = fopen("binääripuu.txt", "a")) == NULL) {                        /*avataan tiedosto kirjoittamista varten*/
 
         perror("Tiedoston avaus epäonnistui\n");
         exit(1);
@@ -126,14 +126,14 @@ void rotate_right(pTree *pNode, int *status) {
 }
 
 
-int addNode(pTree *pNode, int number, int *stable) {
+int addNode(pTree *pNode, int number, int *stable) {                            /*lisätään luku puuhun*/
 
     int temp = 0;
 
     if(!(*pNode)) {
 
         *stable = 1;
-        if(!(*pNode = (pTree)malloc(sizeof(pTree)))) {
+        if(!(*pNode = (pTree)malloc(sizeof(pTree)))) {                          /*muistinvaraus*/
             perror("Muistinvaraus epäonnistui!");
             exit(1);
         }
@@ -144,13 +144,13 @@ int addNode(pTree *pNode, int number, int *stable) {
 
     }
 
-    else if(number < (*pNode)->node) {
+    else if(number < (*pNode)->node) {                                          /*jos lisättävä luku on pienempi kuin nykyinen solmu*/
 
         temp = addNode(&(*pNode)->pLeft, number, stable);
 
         if(*stable) {
 
-            switch((*pNode)->status) {
+            switch((*pNode)->status) {                                          /*tarkastetaan onko puu tasapainossa*/
 
                 case -1:
                 (*pNode)->status = 0;
@@ -162,7 +162,7 @@ int addNode(pTree *pNode, int number, int *stable) {
                 break;
 
                 case 1:
-                rotate_left(pNode, stable);
+                rotate_left(pNode, stable);                                     /*jos puu ei ole tasapainossa*/
                 break;
 
             }
@@ -171,13 +171,13 @@ int addNode(pTree *pNode, int number, int *stable) {
 
     }
 
-    else if(number > (*pNode)->node) {
+    else if(number > (*pNode)->node) {                                          /*jos lisättävä luku on suurempi kuin nykyinen solmu*/
 
         temp = addNode(&(*pNode)->pRight, number, stable);
 
         if(*stable) {
 
-            switch((*pNode)->status) {
+            switch((*pNode)->status) {                                          /*tarkastetaan onko puu tasapainossa*/
 
                 case 1:
                 (*pNode)->status = 0;
@@ -189,7 +189,7 @@ int addNode(pTree *pNode, int number, int *stable) {
                 break;
 
                 case -1:
-                rotate_right(pNode, stable);
+                rotate_right(pNode, stable);                                    /*jos puu ei ole tasapainossa*/
                 break;
 
             }
@@ -198,7 +198,7 @@ int addNode(pTree *pNode, int number, int *stable) {
 
     }
 
-    else {
+    else {                                                                      /*jos luku löytyy jo puusta*/
 
         *stable = 0;
         //printf("Luku %d on jo puussa\n", number);
@@ -211,7 +211,7 @@ int addNode(pTree *pNode, int number, int *stable) {
 }
 
 
-void emptyTree(pTree pNode) {
+void emptyTree(pTree pNode) {                                                   /*muistin vapautus*/
 
     if(pNode) {
 
@@ -224,7 +224,7 @@ void emptyTree(pTree pNode) {
 }
 
 
-int getHeight(pTree pNode, int current) {
+int getHeight(pTree pNode, int current) {                                       /*haetaan puun syvyys*/
 
     int h = 0;
     int temp;
@@ -233,7 +233,7 @@ int getHeight(pTree pNode, int current) {
 
         h = current;
         temp = getHeight(pNode->pLeft, current+1);
-        h = (h >= temp) ? h : temp;
+        h = (h >= temp) ? h : temp;                                             /*jos nykyinen taso on pienempi kuin uusi arvo, tallennetaan uusi arvo*/
         temp = getHeight(pNode->pRight, current+1);
         h = (h >= temp) ? h : temp;
 
@@ -244,30 +244,30 @@ int getHeight(pTree pNode, int current) {
 }
 
 
-int searchKey(pTree pNode, int key) {
+int searchKey(pTree pNode, int key) {                                           /*etsitään arvoa puusta*/
 
-	if(pNode == NULL) {
+    if(pNode == NULL) {                                                         /*jos arvoa ei löydy puusta*/
 
-		return 0;
+        return 0;
 
-	}
+    }
 
-	else if(pNode->node == key) {
+    else if(pNode->node == key) {                                               /*arvo on puussa*/
 
-		return pNode->node;
+        return pNode->node;
 
-	}
+    }
 
-	else if(pNode->node > key) {
+    else if(pNode->node > key) {                                                /*siirrytään vasemmalle, koska haettu arvo*/
+                                                                                /*on pienempää kuin nykyisen solmun arvo*/
+        return searchKey(pNode->pLeft, key);
 
-		return searchKey(pNode->pLeft, key);
+    }
 
-	}
+    else {                                                                      /*siirrytään oikealle, koska haettu arvo*/
+                                                                                /*on suurempaa kuin nykyisen solmun arvo*/
+        return searchKey(pNode->pRight, key);
 
-	else {
-
-		return searchKey(pNode->pRight, key);
-
-	}
+    }
 
 }

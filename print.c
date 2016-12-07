@@ -4,18 +4,19 @@
 #include <stdlib.h>
 #include <math.h>
 #include <locale.h>
+#include <ctype.h>
+#include <limits.h>
 #include "bintree.h"
 #include "misc.h"
-#include <ctype.h>
 
 
-int mainMenu(void) {
+int mainMenu(void) {															/*päävalikko*/
 
 	int selection;
-	char temp [3];
+	char temp [CHAR_MAX];
 
 	printf ("Valitse toiminto valikosta:\n"
-			"1) Lisää luku(ja) puuhun\n"
+			"1) Lisää luvut puuhun\n"
 			"2) Tulosta puu\n"
 			"3) Etsi luku\n"
 			"4) Tyhjennä puu\n"
@@ -23,17 +24,28 @@ int mainMenu(void) {
 			"Valintasi: ");
 
 	fgets(temp, sizeof(temp), stdin);
-	selection = atoi(temp);
-	printf("\n");
+
+	if(checkValue(*temp) == 1) {
+
+		selection = atoi(temp);
+		printf("\n");
+
+	}
+
+	else {
+
+		selection = -1;
+
+	}
 
 	return selection;
 
 }
 
 
-int fileMenu(void) {
+int fileMenu(void) {															/*tiedostolukuvalikko*/
 
-	char temp [3];
+	char temp [CHAR_MAX];
 
 	while(1) {
 
@@ -51,7 +63,7 @@ int fileMenu(void) {
 
 				else {
 
-					printf("Virheellinen valinta!\n");
+					printf("\nVirheellinen valinta!\n");
 
 				}
 
@@ -62,7 +74,7 @@ int fileMenu(void) {
 }
 
 
-void printLines(int help, int height, int i, FILE *pFile) {
+void printLines(int help, int height, int i, FILE *pFile) {						/*tulostaa muotoilun*/
 
 	for(int j = 0; (help-1)/2 > j; j++) {
 
@@ -74,23 +86,23 @@ void printLines(int help, int height, int i, FILE *pFile) {
 
 		for(int k = 0; k < pow(2,i); k++) {
 
-			fprintf(pFile, "  %lc", 0x250F);
+			fprintf(pFile, "  %lc", 0x250F);									/*oikea reuna*/
 
-			for(int l = 0; l <= 4*help+1; l++) {
-
-				fprintf(pFile, "%lc", 0x2501);
-
-			}
-
-			fprintf(pFile, "%lc", 0x253B);
-
-			for(int l = 0; l <= 4*help+1; l++) {
+			for(int l = 0; l <= 4*help+1; l++) {								/*väliviiva*/
 
 				fprintf(pFile, "%lc", 0x2501);
 
 			}
 
-			fprintf(pFile, "%lc  ", 0x2513);
+			fprintf(pFile, "%lc", 0x253B);										/*keskimmäinen*/
+
+			for(int l = 0; l <= 4*help+1; l++) {								/*väliviiva*/
+
+				fprintf(pFile, "%lc", 0x2501);
+
+			}
+
+			fprintf(pFile, "%lc  ", 0x2513);									/*vasen reuna*/
 
 			for(int j = 0; help >= j; j++) {
 
@@ -105,12 +117,12 @@ void printLines(int help, int height, int i, FILE *pFile) {
 }
 
 
-void printLayer(pTree pNode, int current, int layer, int h, FILE *pFile) {
+void printLayer(pTree pNode, int current, int layer, int h, FILE *pFile) {		/*kirjoitetaan tason solmut tiedostoon*/
 
     int i;
     int help = (int)pow(2.0, (double)(h-layer)) - 1;
 
-    if(pNode && current == layer) {
+    if(pNode && current == layer) {												/*jos ollaan halutulla tasolla ja solmu on olemassa*/
 
         for(i = 0; help > i; i++) {
 
@@ -128,7 +140,7 @@ void printLayer(pTree pNode, int current, int layer, int h, FILE *pFile) {
 
     }
 
-    else if(!pNode && current == layer) {
+    else if(!pNode && current == layer) {										/*jos ollaan halutulla tasolla ja solmua ei ole olemassa*/
 
         for(i = 0; help > i; i++) {
 
@@ -136,7 +148,7 @@ void printLayer(pTree pNode, int current, int layer, int h, FILE *pFile) {
 
         }
 
-        fprintf(pFile, "%s\t\t", "NULL");
+        fprintf(pFile, "%s\t\t", "NULL");										/*tulostetaan solmun paikalle NULL*/
 
         for(i = 0; help > i; i++) {
 
@@ -147,7 +159,7 @@ void printLayer(pTree pNode, int current, int layer, int h, FILE *pFile) {
     }
 
 
-    else if(pNode && current < layer) {
+    else if(pNode && current < layer) {											/*siirrytään seuraavalle tasolle*/
 
         printLayer(pNode->pLeft, current+1, layer, h, pFile);
         //printf("\t%d %d\t", layer, h);
@@ -155,7 +167,7 @@ void printLayer(pTree pNode, int current, int layer, int h, FILE *pFile) {
 
     }
 
-    else if(!pNode && current < layer) {
+    else if(!pNode && current < layer) {										/*jos ollaan jo tyhjässä*/
 
         fprintf(pFile, "\t\t\t\t");
 
@@ -164,7 +176,7 @@ void printLayer(pTree pNode, int current, int layer, int h, FILE *pFile) {
 }
 
 
-void printTree(pTree pStart) {
+void printTree(pTree pStart) {													/*kirjoittaa puun muotoiltuna tiedostoon*/
 
 	setlocale(LC_ALL, "");
 	FILE* pFile;
@@ -180,16 +192,40 @@ void printTree(pTree pStart) {
 
 	for(int i = 0; i <= height; i++) {
 
-		help = (int)pow(2.0, (double)(height-i)) - 1;
+		help = (int)pow(2.0, (double)(height-i)) - 1;							/*lasketaan tarvittavat tabulaattorit*/
 
-		printLayer(pStart, 0, i, height, pFile);
+		printLayer(pStart, 0, i, height, pFile);								/*printataan lukuarvot*/
 		fprintf(pFile, "\n");
-		printLines(help, height, i, pFile);
+		printLines(help, height, i, pFile);										/*printataan puun muotoilu*/
 		fprintf(pFile, "\n\n");
 
 	}
 
 	fprintf(pFile, "\n\n\n");
+	fclose(pFile);
+
+}
+
+
+void printTreeTerminal(pTree pStart) {											/*lukee puutiedoston terminaaliin*/
+
+	setlocale(LC_ALL, "");
+	FILE* pFile;
+	char buffer[CHAR_MAX];
+
+	if((pFile = fopen("binääripuu.txt", "r")) == NULL) {
+
+		perror("Tiedoston avaus epäonnistui\n");
+		exit(1);
+
+	}
+
+	while(fgets(buffer,(sizeof(buffer)), pFile) != NULL) {
+
+		printf("%s", buffer);
+
+	}
+
 	fclose(pFile);
 
 }
