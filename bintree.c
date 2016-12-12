@@ -133,7 +133,7 @@ int addNode(pTree *pNode, int number, int *stable) {                            
     if(!(*pNode)) {
 
         *stable = 1;
-        if(!(*pNode = (pTree)malloc(sizeof(pTree)))) {                          /*muistinvaraus*/
+        if(!(*pNode = malloc(sizeof(pTree)))) {                                 /*muistinvaraus*/
             perror("Muistinvaraus epäonnistui!");
             exit(1);
         }

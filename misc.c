@@ -11,13 +11,13 @@
 #include <math.h>
 
 int checkValue(char);
-void callTree(pTree*, int, int *);
+void callTree(pTree*, int, int, int *);
 
 
 void generateNumbers(char *filename) {											/*generoidaan numeroita tiedostoon*/
 
 	int minLimit, maxLimit, numCount, i, number;
-	char tempMin[CHAR_MAX], tempMax[CHAR_MAX], tempCount[CHAR_MAX];
+	char tempMin[CHAR_MAX/2], tempMax[CHAR_MAX/2], tempCount[CHAR_MAX/2];
 	FILE* pFile;
 
 	while(1) {
@@ -75,13 +75,66 @@ void generateNumbers(char *filename) {											/*generoidaan numeroita tiedost
 }
 
 
+int generateX(char *filename) {
+
+	int count, i;
+	char tempC[CHAR_MAX/2];
+	FILE* pFile;
+
+	while(1) {
+
+		printf("Kuinka monta lukua generoidaan: ");
+		fgets(tempC, sizeof(tempC), stdin);
+
+		if(checkValue(*tempC) == 1) {
+
+			count = atoi(tempC);
+			break;
+
+		}
+
+		else {
+
+			printf("Virheellinen syöte :C\n");
+
+		}
+
+	}
+
+
+
+	printf("Kirjoitetaan tiedostoon: %s\n", filename);
+	if ((pFile = fopen(filename, "w")) != NULL) {
+
+		for (i = 1; i <= count; i++) {
+
+			fprintf(pFile,"%d\n", i);
+
+		}
+
+	}
+
+	else {
+
+		perror("Tiedostoon kirjoittaminen epäonnistui.\n");
+		exit(1);
+
+	}
+
+	fclose(pFile);
+	printf("\n");
+	return count;
+
+}
+
+
 void createTree(pTree *pStart, int stable) {									/*Aliohjelma tiedoston lukuun*/
 
 	FILE* pFile;
-	char buffer[CHAR_MAX];
-	char name[CHAR_MAX];
+	char buffer[CHAR_MAX/2];
+	char name[CHAR_MAX/2];
 	int j = 0;
-	int number, selection;
+	int number, selection, check = 0;
 
 	selection = fileMenu();
 
@@ -105,6 +158,13 @@ void createTree(pTree *pStart, int stable) {									/*Aliohjelma tiedoston luku
 
 	}
 
+	else if(selection == 3) {
+
+		printf("Luodaan tiedosto: %s\n", name);
+		check = generateX(name);
+
+	}
+
 	printf("Avataan tiedosto: %s\n", name);
 	if ((pFile = fopen(name,"r")) == NULL) {									/*Avatataan tiedosto lukutilaan*/
 
@@ -121,7 +181,7 @@ void createTree(pTree *pStart, int stable) {									/*Aliohjelma tiedoston luku
 		if ((checkValue(*buffer)) == 1) {										/*tarkastetaan tiedostosta luetun arvon oikeellisuus*/
 
 			number = atoi(buffer);
-			callTree(pStart, number, &stable);									/*kutsutaan puuta*/
+			callTree(pStart, number, check, &stable);							/*kutsutaan puuta*/
 
 		}
 
@@ -138,6 +198,12 @@ void createTree(pTree *pStart, int stable) {									/*Aliohjelma tiedoston luku
 		printf("Tiedosto on tyhjä!\n");
 		fclose(pFile);
 		exit(1);
+
+	}
+
+	if(check != 0) {
+
+		printTree(*pStart);
 
 	}
 
@@ -199,7 +265,7 @@ int checkValue(char buffer) {													/*tarkastaa syötteen*/
 }
 
 
-void callTree(pTree *pStart, int number, int *stable) {							/*kutsuu puuta*/
+void callTree(pTree *pStart, int number, int check, int *stable) {							/*kutsuu puuta*/
 
 	int height;
 	FILE* pFile;
@@ -218,7 +284,11 @@ void callTree(pTree *pStart, int number, int *stable) {							/*kutsuu puuta*/
 
 	if(addNode(pStart, number, stable) == 0) {									/*jos puuhun lisäys onnistuu*/
 
-		printTree(*pStart);														/*tulostetaan puu tiedostoon*/
+		if(check == 0) {
+
+			printTree(*pStart);													/*tulostetaan puu tiedostoon*/
+
+		}
 
 	}
 

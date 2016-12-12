@@ -13,7 +13,7 @@
 int mainMenu(void) {															/*päävalikko*/
 
 	int selection;
-	char temp [CHAR_MAX];
+	char temp [CHAR_MAX/2];
 
 	printf ("Valitse toiminto valikosta:\n"
 			"1) Lisää luvut puuhun\n"
@@ -45,17 +45,18 @@ int mainMenu(void) {															/*päävalikko*/
 
 int fileMenu(void) {															/*tiedostolukuvalikko*/
 
-	char temp [CHAR_MAX];
+	char temp [CHAR_MAX/2];
 
 	while(1) {
 
 		printf ("Valitse toiminto valikosta:\n"
 				"1) Lue valmiista tiedostosta\n"
 				"2) Luo uusi random-numerotiedosto\n"
+				"3) Lisää x peräkkäistä lukua\n"
 				"Valintasi: ");
 				fgets(temp, sizeof(temp), stdin);
 
-				if(checkValue(*temp) == 1 && (atoi(temp) == 1 || atoi(temp) == 2)) {
+				if(checkValue(*temp) == 1 && (atoi(temp) == 1 || atoi(temp) == 2 || atoi(temp) == 3)) {
 
 					break;
 
@@ -211,7 +212,7 @@ void printTreeTerminal(pTree pStart) {											/*lukee puutiedoston terminaali
 
 	setlocale(LC_ALL, "");
 	FILE* pFile;
-	char buffer[CHAR_MAX];
+	char buffer[CHAR_MAX/2];
 
 	if((pFile = fopen("binääripuu.txt", "r")) == NULL) {
 

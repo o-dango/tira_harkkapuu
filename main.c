@@ -9,7 +9,7 @@
 int main(void) {
 
 	pTree pStart = NULL;
-	char temp[CHAR_MAX];
+	char temp[CHAR_MAX/2];
 	int selection = 1, key, stable = 0; /*stable = tasapainoilmaisin*/
 
 	do {
@@ -23,14 +23,22 @@ int main(void) {
 					emptyTree(pStart);
 					pStart = NULL;
 
-				}
+					printf("Muisti vapautettu!\n");
+					printf("＼\\ ٩( ᐛ )و /／\n\n");
 
-				printf("\nMuisti vapautettu!\n");
-				printf("＼\\ ٩( ᐛ )و /／\n");
+				}
 
 				break;
 
 			case 1:                     										/*Luvun lisäys*/
+				if(pStart != NULL) {
+
+					emptyTree(pStart);
+					stable = 0;
+					pStart = NULL;
+
+				}
+
 				createTree(&pStart, &stable);
 				break;
 
