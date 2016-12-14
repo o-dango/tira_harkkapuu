@@ -1,5 +1,6 @@
 #include "bintree.h"
 
-void createTree(pTree *pStart, int *);
-int checkValue(char buffer);
-void callTree(pTree *pStart, int, int *);
+void generateNumbers(char);
+void createTree(pTree *, int *);
+int checkValue(char);
+void callTree(pTree*, int, int, int *);
